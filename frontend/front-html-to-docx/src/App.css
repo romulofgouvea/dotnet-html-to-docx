@@ -3,12 +3,30 @@
 	justify-content: center;
 }
 
-.app .container{
+.app .container {
 	display: flex;
 	flex-direction: column;
 	max-width: 700px;
 }
 
-.custon-button{
+.custon-button {
 	margin: 30px;
+}
+
+.teste-red {
+	font-family: 'Calibri';
+	color: red;
+	text-align: justify;
+}
+
+.t-center {
+	text-align: center;
+}
+
+p:first-line {
+	color:red;
+}
+
+p {
+	text-indent:40px;
 }

@@ -49,6 +49,7 @@ namespace ApiHtmlToDocx.Controllers
 
                     HtmlConverter converter = new (mainPart);
                     converter.ParseHtml(html);
+					converter.RefreshStyles();
 
                     mainPart.Document.Save();
                 }
