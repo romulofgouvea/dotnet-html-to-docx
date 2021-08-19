@@ -1,4 +1,4 @@
-﻿using ApiHtmlToDocx.Models;
+using ApiHtmlToDocx.Models;
 using DocumentFormat.OpenXml;
 using DocumentFormat.OpenXml.Packaging;
 using DocumentFormat.OpenXml.Wordprocessing;
@@ -13,10 +13,10 @@ namespace ApiHtmlToDocx.Controllers
     public class GeradorController : ControllerBase
     {
         [HttpPost]
-        public string Post([FromBody] ParametrosDocx paramtros)
+        public string Post([FromBody] ParametrosDocx parametros)
         {
-            const string filename = "test.docx";
-            string html = @"
+            var filename = parametros?.Filename ?? "geradoBackend.docx";
+            string html = parametros?.Html ?? @"
                 <!DOCTYPE HTML PUBLIC
                 <html>
                     <head>
@@ -36,7 +36,7 @@ namespace ApiHtmlToDocx.Controllers
 
             if (System.IO.File.Exists(filename)) System.IO.File.Delete(filename);
 
-            using (MemoryStream generatedDocument = new MemoryStream())
+            using (MemoryStream generatedDocument = new ())
             {
                 using (WordprocessingDocument package = WordprocessingDocument.Create(generatedDocument, WordprocessingDocumentType.Document))
                 {
@@ -47,7 +47,7 @@ namespace ApiHtmlToDocx.Controllers
                         new Document(new Body()).Save(mainPart);
                     }
 
-                    HtmlConverter converter = new HtmlConverter(mainPart);
+                    HtmlConverter converter = new (mainPart);
                     converter.ParseHtml(html);
 
                     mainPart.Document.Save();

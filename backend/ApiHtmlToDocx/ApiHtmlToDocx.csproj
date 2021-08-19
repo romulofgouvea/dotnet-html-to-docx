@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="DocumentFormat.OpenXml" Version="2.13.1" />
     <PackageReference Include="HtmlToOpenXml.dll" Version="2.2.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.5" />
   </ItemGroup>
 
 </Project>
