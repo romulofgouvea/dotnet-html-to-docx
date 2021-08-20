@@ -38,10 +38,10 @@ namespace ApiHtmlToDocx
 			}
 
 			app.UseCors(c =>
-                c.AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-            );
+				c.AllowAnyOrigin()
+				.AllowAnyMethod()
+				.AllowAnyHeader()
+			);
 
 			app.UseHttpsRedirection();
 
