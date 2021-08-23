@@ -116,7 +116,7 @@ namespace ApiHtmlToDocx.Controllers
 				Console.WriteLine();
 			}
 
-			Console.ReadLine();
+			//Console.ReadLine();
 		}
 	}
 }
