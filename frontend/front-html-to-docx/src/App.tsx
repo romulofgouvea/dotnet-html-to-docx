@@ -1,7 +1,7 @@
 import { Button } from "antd";
 import React, { useState } from "react";
 import RichTextEditor, { EditorValue, ToolbarConfig } from "react-rte";
-import { EditorState } from "draft-js";
+import { Editor, EditorState, Modifier } from "draft-js";
 
 import "./App.css";
 import api, { BASE_URL } from "./services/api";
@@ -130,28 +130,59 @@ function App() {
 		console.log("result template: ", result);
 	};
 
-	const addTextOnValue = (value: any) => {
-		console.log(value);
+	const addTextOnValueArroba = (editorState: EditorState) => {
+		let selection = editorState.getSelection();
+		const anchorKey = selection.getAnchorKey();
+		const currentContent = editorState.getCurrentContent();
+		const currentBlock = currentContent.getBlockForKey(anchorKey);
+
+		//Then based on the docs for SelectionState -
+		const start = selection.getStartOffset();
+		const end = selection.getEndOffset();
+		const selectedText = currentBlock.getText().slice(start, end);
+
+		var contentStateModified = Modifier.replaceText(
+			value.getEditorState().getCurrentContent(),
+			selection,
+			`{[@${selectedText}]}`,
+			editorState.getCurrentInlineStyle()
+		);
+
+		const editor = EditorState.createWithContent(contentStateModified);
+		setValue(EditorValue.createFromState(editor));
+	};
+
+	const addTextOnValueExclamacao = (editorState: EditorState) => {
+		let selection = editorState.getSelection();
+		const anchorKey = selection.getAnchorKey();
+		const currentContent = editorState.getCurrentContent();
+		const currentBlock = currentContent.getBlockForKey(anchorKey);
+
+		//Then based on the docs for SelectionState -
+		const start = selection.getStartOffset();
+		const end = selection.getEndOffset();
+		const selectedText = currentBlock.getText().slice(start, end);
+
+		var contentStateModified = Modifier.replaceText(
+			value.getEditorState().getCurrentContent(),
+			selection,
+			`{[!${selectedText}]}`,
+			editorState.getCurrentInlineStyle()
+		);
+
+		const editor = EditorState.createWithContent(contentStateModified);
+		setValue(EditorValue.createFromState(editor));
 	};
 
 	const customControls = [
-		(setValue: any, getValue: any, editorState: EditorState) => {
-			// Get block for current selection
-			let selection = editorState.getSelection();
-			const anchorKey = selection.getAnchorKey();
-			const currentContent = editorState.getCurrentContent();
-			const currentBlock = currentContent.getBlockForKey(anchorKey);
-
-			//Then based on the docs for SelectionState -
-			const start = selection.getStartOffset();
-			const end = selection.getEndOffset();
-
-			const selectedText = currentBlock.getText().slice(start, end);
-
-			return (
-				<Button onClick={() => addTextOnValue(selectedText)}>@</Button>
-			);
-		},
+		(setValue: any, getValue: any, editorState: EditorState) => (
+			<Button onClick={() => addTextOnValueArroba(editorState)}>@</Button>
+		),
+		(setValue: any, getValue: any, editorState: EditorState) => (
+			<Button onClick={() => addTextOnValueExclamacao(editorState)}>
+				!
+			</Button>
+		),
 	];
 
 	return (
