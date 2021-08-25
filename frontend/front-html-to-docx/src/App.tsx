@@ -1,6 +1,7 @@
 import { Button } from "antd";
 import React, { useState } from "react";
 import RichTextEditor, { EditorValue, ToolbarConfig } from "react-rte";
+import { EditorState } from "draft-js";
 
 import "./App.css";
 import api, { BASE_URL } from "./services/api";
@@ -50,6 +51,7 @@ function App() {
 				body{
 					text-align: justify;
 					font-family: 'Calibri';
+					font-size: 12pt;
 				}
 
 				h1 {
@@ -73,9 +75,19 @@ function App() {
 			</style>
 			</head>
 			<body>
-				<p class="title"><b>Lorem Ipsum</b></p>
+				<span class="title"><b>Lorem Ipsum</b></span>
 				<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
 				<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+
+				<table width="50%" align="center" border="1">
+					<tr>
+						<td rowspan="2">Anime Studio</td>
+						<td>Pixar</td>
+					</tr>
+					<tr>
+						<td>Studio Ghibli</td>
+					</tr>
+				</table>
 
 				<table width="100%" border="1">
 					<tr style="font-weight: bold">
@@ -93,14 +105,14 @@ function App() {
 						<td>Spirited Away</td>
 					</tr>
 				</table>
-			</body>
-		</html>
 	`;
 
 	const enviarConteudoProBackend = async () => {
+		const html2 = html + value.toString("html") + "</body></html>";
+
 		const data = {
 			filename: "geradoFrontend.docx",
-			html,
+			html: html2,
 		};
 
 		var result = await api.post(`${BASE_URL}/gerador`, data);
@@ -108,13 +120,39 @@ function App() {
 	};
 
 	const enviarConteudoProBackendTemplate = async () => {
+		const html2 = html + value.toString("html") + "</body></html>";
+
 		const data = {
 			filename: "geradoFrontendTemplate.docx",
-			html,
+			html: html2,
 		};
 		const result = await api.post(`${BASE_URL}/gerador/template`, data);
 		console.log("result template: ", result);
 	};
+
+	const addTextOnValue = (value: any) => {
+		console.log(value);
+	};
+
+	const customControls = [
+		(setValue: any, getValue: any, editorState: EditorState) => {
+			// Get block for current selection
+			let selection = editorState.getSelection();
+			const anchorKey = selection.getAnchorKey();
+			const currentContent = editorState.getCurrentContent();
+			const currentBlock = currentContent.getBlockForKey(anchorKey);
+
+			//Then based on the docs for SelectionState -
+			const start = selection.getStartOffset();
+			const end = selection.getEndOffset();
+
+			const selectedText = currentBlock.getText().slice(start, end);
+
+			return (
+				<Button onClick={() => addTextOnValue(selectedText)}>@</Button>
+			);
+		},
+	];
 
 	return (
 		<div className="app">
@@ -122,6 +160,7 @@ function App() {
 				<RichTextEditor
 					value={value}
 					toolbarConfig={defaultToolbarConfig}
+					{...{ customControls }}
 					onChange={(value: EditorValue) => {
 						// pegar o valor: value.toString('html');
 						setValue(value);
