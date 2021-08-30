@@ -1,7 +1,7 @@
 import { Button } from "antd";
 import React, { useState } from "react";
 import RichTextEditor, { EditorValue, ToolbarConfig } from "react-rte";
-import { Editor, EditorState, Modifier } from "draft-js";
+import { EditorState, Modifier } from "draft-js";
 
 import "./App.css";
 import api, { BASE_URL } from "./services/api";
@@ -130,7 +130,10 @@ function App() {
 		console.log("result template: ", result);
 	};
 
-	const addTextOnValueArroba = (editorState: EditorState) => {
+	const transformValueInVariable = (
+		editorState: EditorState,
+		type: string
+	) => {
 		let selection = editorState.getSelection();
 		const anchorKey = selection.getAnchorKey();
 		const currentContent = editorState.getCurrentContent();
@@ -144,29 +147,7 @@ function App() {
 		var contentStateModified = Modifier.replaceText(
 			value.getEditorState().getCurrentContent(),
 			selection,
-			`{[@${selectedText}]}`,
-			editorState.getCurrentInlineStyle()
-		);
-
-		const editor = EditorState.createWithContent(contentStateModified);
-		setValue(EditorValue.createFromState(editor));
-	};
-
-	const addTextOnValueExclamacao = (editorState: EditorState) => {
-		let selection = editorState.getSelection();
-		const anchorKey = selection.getAnchorKey();
-		const currentContent = editorState.getCurrentContent();
-		const currentBlock = currentContent.getBlockForKey(anchorKey);
-
-		//Then based on the docs for SelectionState -
-		const start = selection.getStartOffset();
-		const end = selection.getEndOffset();
-		const selectedText = currentBlock.getText().slice(start, end);
-
-		var contentStateModified = Modifier.replaceText(
-			value.getEditorState().getCurrentContent(),
-			selection,
-			`{[!${selectedText}]}`,
+			`{[${type}${selectedText}]}`,
 			editorState.getCurrentInlineStyle()
 		);
 
@@ -176,14 +157,27 @@ function App() {
 
 	const customControls = [
 		(setValue: any, getValue: any, editorState: EditorState) => (
-			<Button onClick={() => addTextOnValueArroba(editorState)}>@</Button>
+			<Button onClick={() => transformValueInVariable(editorState, "@")}>
+				@
+			</Button>
 		),
 		(setValue: any, getValue: any, editorState: EditorState) => (
-			<Button onClick={() => addTextOnValueExclamacao(editorState)}>
+			<Button onClick={() => transformValueInVariable(editorState, "!")}>
 				!
 			</Button>
 		),
 	];
+
+	const getStringFromTextAreaRte = () => {
+		var currentValue = value.getEditorState().getCurrentContent();
+		var blocks = currentValue.getBlocksAsArray();
+
+		var resultString = "";
+		for (let block of blocks) {
+			resultString += block.getText() + " ";
+		}
+		return resultString;
+	};
 
 	return (
 		<div className="app">
@@ -194,6 +188,11 @@ function App() {
 					{...{ customControls }}
 					onChange={(value: EditorValue) => {
 						// pegar o valor: value.toString('html');
+
+						const result = getStringFromTextAreaRte();
+
+						console.log(result);
+
 						setValue(value);
 					}}
 				/>
