@@ -38,6 +38,8 @@ namespace ApiHtmlToDocx.Controllers
 						new Document(new Body()).Save(mainPart);
 					}
 
+					SecurityDocHelper.ProtectWordDoc(package, "123456789101112");
+
 					HtmlConverter converter = new(mainPart);
 					converter.ParseHtml(result.Html);
 					converter.RefreshStyles();

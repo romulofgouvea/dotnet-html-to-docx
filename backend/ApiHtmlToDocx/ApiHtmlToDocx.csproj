@@ -5,10 +5,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="DocumentFormat.OpenXml" Version="2.13.1" />
-		<PackageReference Include="HtmlToOpenXml.dll" Version="2.2.0" />
-		<PackageReference Include="PreMailer.Net" Version="2.2.0" />
-		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.5" />
+		<PackageReference Include="DocumentFormat.OpenXml" Version="2.17.1" />
+		<PackageReference Include="HtmlToOpenXml.dll" Version="2.3.0" />
+		<PackageReference Include="PreMailer.Net" Version="2.4.0" />
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
 		<PackageReference Include="System.Resources.ResourceManager" Version="4.3.0" />
 	</ItemGroup>
 
